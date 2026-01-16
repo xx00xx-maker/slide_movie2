@@ -1,0 +1,48 @@
+export interface SlideData {
+  id: string
+  slideNumber: number
+  imageUrl: string
+  imagePath?: string // Server-side path for export
+  text: string
+  speed: number
+  intonation: number
+  audioStatus: "not_generated" | "generating" | "generated"
+  audioUrl?: string
+  audioPath?: string // Server-side path for export
+  actingInstruction?: string
+  voiceId?: string // Override global voice setting per slide
+}
+
+export interface GlobalSettings {
+  voiceId: string
+  speed: number
+}
+
+export interface ProjectData {
+  projectId: string
+  projectDir: string
+  scenes: SlideData[]
+  globalSettings: GlobalSettings
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AnalyzeResponse {
+  projectId: string
+  projectDir: string
+  scenes: Array<{
+    slideNumber: number
+    imageUrl: string
+    script: string
+  }>
+}
+
+export interface TtsResponse {
+  audioUrl: string
+  audioPath: string
+}
+
+export interface ExportResponse {
+  videoUrl: string
+  videoPath: string
+}

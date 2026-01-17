@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect } from "react"
 import { Header } from "@/components/header"
 import { ControlPanel } from "@/components/control-panel"
 import { SlideEditor } from "@/components/slide-editor"
-import type { SlideData, GlobalSettings, AnalyzeResponse, TtsResponse, ExportResponse } from "@/types/presentation"
+import type { SlideData, GlobalSettings, AnalyzeResponse, TtsResponse, ExportResponse, LipsyncResponse } from "@/types/presentation"
 import { getVoiceById, getDefaultVoice } from "@/lib/voices"
 
 const LOCAL_STORAGE_KEY = "presentation-maker-project"
@@ -304,6 +304,79 @@ export function PresentationVideoMaker() {
     }
   }, [])
 
+  const handleAvatarUpload = useCallback(async (id: string, file: File) => {
+    const slide = slides.find((s) => s.id === id)
+    if (!slide || !slide.audioPath) {
+      alert("先に音声を生成してください")
+      return
+    }
+
+    // Update status to uploading
+    setSlides((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, avatarStatus: "uploading" as const } : s))
+    )
+
+    try {
+      const formData = new FormData()
+      formData.append("avatarImage", file)
+      formData.append("slideId", id)
+      formData.append("projectId", projectId || "default")
+      formData.append("audioPath", slide.audioPath)
+
+      const response = await fetch("/api/lipsync", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Upload failed")
+      }
+
+      const data: LipsyncResponse = await response.json()
+
+      setSlides((prev) =>
+        prev.map((s) =>
+          s.id === id
+            ? {
+              ...s,
+              avatarImageUrl: data.avatarImageUrl,
+              avatarVideoUrl: data.avatarVideoUrl || undefined,
+              avatarVideoPath: data.avatarVideoPath || undefined,
+              avatarStatus: data.status === "ready" ? "ready" as const : "generating" as const,
+            }
+            : s
+        )
+      )
+
+      if (data.message) {
+        console.log(data.message)
+      }
+    } catch (error) {
+      console.error("Avatar upload error:", error)
+      setSlides((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, avatarStatus: "none" as const } : s))
+      )
+      alert(`アバターアップロードエラー: ${error instanceof Error ? error.message : "Unknown error"}`)
+    }
+  }, [slides, projectId])
+
+  const handleAvatarRemove = useCallback((id: string) => {
+    setSlides((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? {
+            ...s,
+            avatarImageUrl: undefined,
+            avatarVideoUrl: undefined,
+            avatarVideoPath: undefined,
+            avatarStatus: "none" as const,
+          }
+          : s
+      )
+    )
+  }, [])
+
   return (
     <div className="flex h-screen flex-col bg-background">
       <Header
@@ -336,6 +409,8 @@ export function PresentationVideoMaker() {
           onStopAudio={handleStopAudio}
           onReorderSlides={handleReorderSlides}
           onRewriteScript={handleRewriteScript}
+          onAvatarUpload={handleAvatarUpload}
+          onAvatarRemove={handleAvatarRemove}
         />
       </div>
     </div>

@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { GripVertical, Play, Loader2, CheckCircle2, Circle, Volume2, Square, Wand2, User, ZoomIn } from "lucide-react"
 import type { SlideData } from "@/types/presentation"
 import { VOICE_OPTIONS, getVoiceById } from "@/lib/voices"
+import { AvatarUpload } from "@/components/avatar-upload"
 
 interface SlideCardProps {
   slide: SlideData
@@ -22,6 +23,8 @@ interface SlideCardProps {
   onPlayAudio: () => void
   onStopAudio: () => void
   onRewriteScript: () => void
+  onAvatarUpload: (file: File) => void
+  onAvatarRemove: () => void
   isPlaying: boolean
 }
 
@@ -34,6 +37,8 @@ export function SlideCard({
   onPlayAudio,
   onStopAudio,
   onRewriteScript,
+  onAvatarUpload,
+  onAvatarRemove,
   isPlaying,
 }: SlideCardProps) {
   const statusConfig = {
@@ -95,11 +100,26 @@ export function SlideCard({
 
           {/* Content Grid */}
           <div className="grid gap-4 md:grid-cols-[280px_1fr]">
-            {/* Slide Preview - 16:9 aspect ratio */}
-            <SlideImagePreview
-              imageUrl={slide.imageUrl}
-              slideNumber={index + 1}
-            />
+            {/* Slide Preview - 16:9 aspect ratio with avatar overlay */}
+            <div className="relative aspect-video overflow-hidden rounded-lg border border-border bg-muted">
+              <SlideImagePreview
+                imageUrl={slide.imageUrl}
+                slideNumber={index + 1}
+              />
+              {/* Avatar Upload - positioned at bottom right */}
+              <div className="absolute bottom-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
+                <AvatarUpload
+                  avatarImageUrl={slide.avatarImageUrl}
+                  avatarVideoUrl={slide.avatarVideoUrl}
+                  avatarStatus={slide.avatarStatus}
+                  slideId={slide.id}
+                  audioPath={slide.audioPath}
+                  onUpload={onAvatarUpload}
+                  onRemove={onAvatarRemove}
+                  disabled={slide.audioStatus !== "generated"}
+                />
+              </div>
+            </div>
 
             {/* Text Editor */}
             <div className="flex flex-col gap-3">
@@ -230,21 +250,17 @@ function SlideImagePreview({ imageUrl, slideNumber }: { imageUrl: string; slideN
 
   return (
     <>
-      <div
-        className="relative aspect-video overflow-hidden rounded-lg border border-border bg-muted cursor-pointer group"
+      <img
+        src={imageUrl || "/placeholder.svg"}
+        alt={`スライド ${slideNumber}`}
+        className="absolute inset-0 h-full w-full object-cover cursor-pointer transition-transform hover:scale-105"
         onClick={() => setIsOpen(true)}
+      />
+      {/* Zoom indicator */}
+      <div
+        className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/30 transition-colors cursor-pointer pointer-events-none"
       >
-        <img
-          src={imageUrl || "/placeholder.svg"}
-          alt={`スライド ${slideNumber}`}
-          className="h-full w-full object-cover transition-transform group-hover:scale-105"
-        />
-        {/* Zoom indicator */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-colors">
-          <ZoomIn className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-        </div>
-        {/* Placeholder for lip-sync character overlay */}
-        <div className="absolute bottom-2 right-2 h-16 w-16 rounded-full border-2 border-dashed border-muted-foreground/30" />
+        <ZoomIn className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -260,3 +276,4 @@ function SlideImagePreview({ imageUrl, slideNumber }: { imageUrl: string; slideN
     </>
   )
 }
+

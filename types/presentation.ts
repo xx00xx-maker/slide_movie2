@@ -11,6 +11,11 @@ export interface SlideData {
   audioPath?: string // Server-side path for export
   actingInstruction?: string
   voiceId?: string // Override global voice setting per slide
+  // Avatar/Lip-sync fields
+  avatarImageUrl?: string      // キャラクター静止画URL
+  avatarVideoUrl?: string      // リップシンク動画URL
+  avatarVideoPath?: string     // サーバーサイドパス
+  avatarStatus?: "none" | "uploading" | "generating" | "ready"
 }
 
 export interface GlobalSettings {
@@ -18,11 +23,20 @@ export interface GlobalSettings {
   speed: number
 }
 
+export interface WipeSettings {
+  diameter: number      // デフォルト280
+  positionX: number     // 左下からのX（デフォルト40）
+  positionY: number     // 左下からのY（デフォルト40）
+  borderWidth: number   // デフォルト8
+  borderColor: string   // デフォルト#FFFFFF
+}
+
 export interface ProjectData {
   projectId: string
   projectDir: string
   scenes: SlideData[]
   globalSettings: GlobalSettings
+  wipeSettings?: WipeSettings
   createdAt: string
   updatedAt: string
 }
@@ -45,4 +59,13 @@ export interface TtsResponse {
 export interface ExportResponse {
   videoUrl: string
   videoPath: string
+}
+
+export interface LipsyncResponse {
+  success: boolean
+  avatarImageUrl: string
+  avatarVideoUrl: string | null
+  avatarVideoPath: string | null
+  status: "pending" | "ready"
+  message?: string
 }

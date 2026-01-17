@@ -41,6 +41,7 @@ image = (
         "onnxruntime-gpu",
         "huggingface_hub",
         "gradio_client",  # For JoyVASA API
+        "fastapi",  # Required for web endpoints
     )
 )
 
@@ -54,7 +55,6 @@ MODEL_DIR = "/models"
     gpu="A10G",  # または "L4"
     timeout=600,
     volumes={MODEL_DIR: volume},
-    secrets=[modal.Secret.from_name("huggingface-secret")],  # オプション
 )
 class LipSyncGenerator:
     """リップシンク動画生成クラス"""
@@ -312,7 +312,7 @@ def generate_lipsync_video(
 
 # Web エンドポイント
 @app.function(image=image, timeout=600)
-@modal.web_endpoint(method="POST")
+@modal.fastapi_endpoint(method="POST")
 def lipsync_endpoint(
     source_image: bytes,
     driving_audio: bytes,

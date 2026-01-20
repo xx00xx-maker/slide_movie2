@@ -15,6 +15,7 @@ export function PresentationVideoMaker() {
   const [globalSettings, setGlobalSettings] = useState<GlobalSettings>({
     voiceId: getDefaultVoice().id,
     speed: 1.0,
+    videoFormat: "landscape",
   })
   const [isProcessing, setIsProcessing] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
@@ -331,6 +332,7 @@ export function PresentationVideoMaker() {
         <SlideEditor
           slides={slides}
           globalVoiceId={globalSettings.voiceId}
+          videoFormat={globalSettings.videoFormat}
           playingSlideId={playingSlideId}
           onSlideUpdate={handleSlideUpdate}
           onGenerateAudio={handleGenerateAudio}

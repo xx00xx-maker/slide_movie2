@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { GripVertical, Play, Loader2, CheckCircle2, Circle, Volume2, Square, Wand2, User, ZoomIn } from "lucide-react"
-import type { SlideData } from "@/types/presentation"
+import type { SlideData, VideoFormat } from "@/types/presentation"
 import { VOICE_OPTIONS, getVoiceById } from "@/lib/voices"
 
 
@@ -18,12 +18,12 @@ interface SlideCardProps {
   slide: SlideData
   index: number
   globalVoiceId: string
+  videoFormat: VideoFormat
   onUpdate: (updates: Partial<SlideData>) => void
   onGenerateAudio: () => void
   onPlayAudio: () => void
   onStopAudio: () => void
   onRewriteScript: () => void
-
   isPlaying: boolean
 }
 
@@ -31,12 +31,12 @@ export function SlideCard({
   slide,
   index,
   globalVoiceId,
+  videoFormat,
   onUpdate,
   onGenerateAudio,
   onPlayAudio,
   onStopAudio,
   onRewriteScript,
-
   isPlaying,
 }: SlideCardProps) {
   const statusConfig = {
@@ -98,8 +98,8 @@ export function SlideCard({
 
           {/* Content Grid */}
           <div className="grid gap-4 md:grid-cols-[280px_1fr]">
-            {/* Slide Preview - 16:9 aspect ratio with avatar overlay */}
-            <div className="relative aspect-video overflow-hidden rounded-lg border border-border bg-muted">
+            {/* Slide Preview - aspect ratio based on format */}
+            <div className={`relative overflow-hidden rounded-lg border border-border bg-muted ${videoFormat === "portrait" ? "aspect-[9/16] w-[120px]" : "aspect-video"}`}>
               <SlideImagePreview
                 imageUrl={slide.imageUrl}
                 slideNumber={index + 1}

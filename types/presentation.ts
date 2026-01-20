@@ -13,9 +13,12 @@ export interface SlideData {
   voiceId?: string // Override global voice setting per slide
 }
 
+export type VideoFormat = "landscape" | "portrait"
+
 export interface GlobalSettings {
   voiceId: string
   speed: number
+  videoFormat: VideoFormat
 }
 
 export interface WipeSettings {

@@ -2,11 +2,12 @@
 
 import { SlideCard } from "@/components/slide-card"
 import { FileText } from "lucide-react"
-import type { SlideData } from "@/types/presentation"
+import type { SlideData, VideoFormat } from "@/types/presentation"
 
 interface SlideEditorProps {
   slides: SlideData[]
   globalVoiceId: string
+  videoFormat: VideoFormat
   playingSlideId: string | null
   onSlideUpdate: (id: string, updates: Partial<SlideData>) => void
   onGenerateAudio: (id: string) => void
@@ -19,6 +20,7 @@ interface SlideEditorProps {
 export function SlideEditor({
   slides,
   globalVoiceId,
+  videoFormat,
   playingSlideId,
   onSlideUpdate,
   onGenerateAudio,
@@ -60,6 +62,7 @@ export function SlideEditor({
             onPlayAudio={() => onPlayAudio(slide.id)}
             onStopAudio={onStopAudio}
             onRewriteScript={() => onRewriteScript(slide.id)}
+            videoFormat={videoFormat}
             isPlaying={playingSlideId === slide.id}
           />
         ))}

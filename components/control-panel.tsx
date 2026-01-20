@@ -10,7 +10,7 @@ import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Upload, FileText, Wand2, Settings2, Loader2, User } from "lucide-react"
-import type { GlobalSettings } from "@/types/presentation"
+import type { GlobalSettings, VideoFormat } from "@/types/presentation"
 import { VOICE_OPTIONS, getVoiceById } from "@/lib/voices"
 
 interface ControlPanelProps {
@@ -61,6 +61,38 @@ export function ControlPanel({
 
   return (
     <aside className="flex w-[350px] flex-col gap-4 border-l border-border bg-card p-4 overflow-y-auto">
+      {/* Video Format Selector */}
+      <Card className="p-4">
+        <Label className="mb-3 flex items-center gap-2 text-sm font-medium">
+          動画フォーマット
+        </Label>
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            variant={globalSettings.videoFormat === "landscape" ? "default" : "outline"}
+            size="sm"
+            onClick={() => onGlobalSettingsChange({ ...globalSettings, videoFormat: "landscape" })}
+            className="gap-2"
+          >
+            <span className="text-lg">📺</span>
+            横型 (16:9)
+          </Button>
+          <Button
+            variant={globalSettings.videoFormat === "portrait" ? "default" : "outline"}
+            size="sm"
+            onClick={() => onGlobalSettingsChange({ ...globalSettings, videoFormat: "portrait" })}
+            className="gap-2"
+          >
+            <span className="text-lg">📱</span>
+            縦型 (9:16)
+          </Button>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {globalSettings.videoFormat === "landscape"
+            ? "YouTube・通常動画向け"
+            : "YouTube Shorts・TikTok向け"}
+        </p>
+      </Card>
+
       {/* PDF Upload Area */}
       <Card className="p-4">
         <Label className="mb-3 flex items-center gap-2 text-sm font-medium">
@@ -72,10 +104,10 @@ export function ControlPanel({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           className={`relative flex h-32 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${isDragOver
-              ? "border-primary bg-primary/5"
-              : pdfFile
-                ? "border-primary/50 bg-primary/5"
-                : "border-muted-foreground/25 hover:border-muted-foreground/50"
+            ? "border-primary bg-primary/5"
+            : pdfFile
+              ? "border-primary/50 bg-primary/5"
+              : "border-muted-foreground/25 hover:border-muted-foreground/50"
             }`}
         >
           <input

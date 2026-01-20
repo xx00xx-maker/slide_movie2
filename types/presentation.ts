@@ -11,11 +11,6 @@ export interface SlideData {
   audioPath?: string // Server-side path for export
   actingInstruction?: string
   voiceId?: string // Override global voice setting per slide
-  // Avatar/Lip-sync fields
-  avatarImageUrl?: string      // キャラクター静止画URL
-  avatarVideoUrl?: string      // リップシンク動画URL
-  avatarVideoPath?: string     // サーバーサイドパス
-  avatarStatus?: "none" | "uploading" | "generating" | "ready"
 }
 
 export interface GlobalSettings {
@@ -61,11 +56,4 @@ export interface ExportResponse {
   videoPath: string
 }
 
-export interface LipsyncResponse {
-  success: boolean
-  avatarImageUrl: string
-  avatarVideoUrl: string | null
-  avatarVideoPath: string | null
-  status: "pending" | "ready"
-  message?: string
-}
+

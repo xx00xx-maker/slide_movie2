@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { GripVertical, Play, Loader2, CheckCircle2, Circle, Volume2, Square, Wand2, User, ZoomIn } from "lucide-react"
 import type { SlideData } from "@/types/presentation"
 import { VOICE_OPTIONS, getVoiceById } from "@/lib/voices"
-import { AvatarUpload } from "@/components/avatar-upload"
+
 
 interface SlideCardProps {
   slide: SlideData
@@ -23,8 +23,7 @@ interface SlideCardProps {
   onPlayAudio: () => void
   onStopAudio: () => void
   onRewriteScript: () => void
-  onAvatarUpload: (file: File) => void
-  onAvatarRemove: () => void
+
   isPlaying: boolean
 }
 
@@ -37,8 +36,7 @@ export function SlideCard({
   onPlayAudio,
   onStopAudio,
   onRewriteScript,
-  onAvatarUpload,
-  onAvatarRemove,
+
   isPlaying,
 }: SlideCardProps) {
   const statusConfig = {
@@ -106,19 +104,7 @@ export function SlideCard({
                 imageUrl={slide.imageUrl}
                 slideNumber={index + 1}
               />
-              {/* Avatar Upload - positioned at bottom right */}
-              <div className="absolute bottom-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
-                <AvatarUpload
-                  avatarImageUrl={slide.avatarImageUrl}
-                  avatarVideoUrl={slide.avatarVideoUrl}
-                  avatarStatus={slide.avatarStatus}
-                  slideId={slide.id}
-                  audioPath={slide.audioPath}
-                  onUpload={onAvatarUpload}
-                  onRemove={onAvatarRemove}
-                  disabled={slide.audioStatus !== "generated"}
-                />
-              </div>
+
             </div>
 
             {/* Text Editor */}

@@ -14,8 +14,6 @@ interface SlideEditorProps {
   onStopAudio: () => void
   onReorderSlides: (fromIndex: number, toIndex: number) => void
   onRewriteScript: (id: string) => void
-  onAvatarUpload: (id: string, file: File) => void
-  onAvatarRemove: (id: string) => void
 }
 
 export function SlideEditor({
@@ -27,8 +25,6 @@ export function SlideEditor({
   onPlayAudio,
   onStopAudio,
   onRewriteScript,
-  onAvatarUpload,
-  onAvatarRemove,
 }: SlideEditorProps) {
   if (slides.length === 0) {
     return (
@@ -64,8 +60,6 @@ export function SlideEditor({
             onPlayAudio={() => onPlayAudio(slide.id)}
             onStopAudio={onStopAudio}
             onRewriteScript={() => onRewriteScript(slide.id)}
-            onAvatarUpload={(file) => onAvatarUpload(slide.id, file)}
-            onAvatarRemove={() => onAvatarRemove(slide.id)}
             isPlaying={playingSlideId === slide.id}
           />
         ))}
